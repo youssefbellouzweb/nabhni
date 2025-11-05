@@ -105,7 +105,7 @@ function AdminDashboard() {
     loadReports();
     
     const intervalId = setInterval(loadReports, 5000);
-    
+        
     return () => clearInterval(intervalId);
   }, []);
 
