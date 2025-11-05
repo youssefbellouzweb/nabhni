@@ -38,7 +38,7 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
         stream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, []); // ✅ تشغيل الكاميرا مرة واحدة فقط
+  }, []);
 
   const takePhoto = () => {
     if (!videoRef.current || !canvasRef.current) return;
@@ -63,7 +63,6 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
 
   return (
     <div className="flex flex-col items-center gap-3 relative">
-      {/* ✅ الفيديو يبقى شغال دائمًا */}
       <video
         ref={videoRef}
         autoPlay
@@ -74,7 +73,6 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
         }`}
       />
 
-      {/* ✅ الصورة تظهر فوق الفيديو */}
       {photo && (
         <img
           src={photo}
