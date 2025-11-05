@@ -15,7 +15,6 @@ interface Report {
   status?: 'new' | 'in_progress' | 'resolved';
 }
 
-// Helper function to get report type in Arabic
 const getReportTypeInArabic = (type: string) => {
   const types: { [key: string]: string } = {
     'نظافة': 'نظافة',
@@ -78,29 +77,24 @@ function AdminDashboard() {
             type: report.type || 'أخرى',
             created_at: report.created_at || new Date().toISOString(),
             status: report.status || 'new',
-            // Ensure location is properly structured
             location: report.location && report.location.lat && report.location.lng 
               ? { lat: report.location.lat, lng: report.location.lng } 
               : null,
-            // Ensure these fields have default values
             image: report.image || null,
             audio: report.audio || null
           }));
           
-          // Sort by creation date (newest first)
           const sortedReports = [...parsedReports].sort((a, b) => 
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           );
           
           setReports(sortedReports);
         } else {
-          // Initialize with empty array if no reports exist
           localStorage.setItem('reports', JSON.stringify([]));
           setReports([]);
         }
       } catch (error) {
         console.error('Error loading reports:', error);
-        // If there's an error parsing, reset the reports
         localStorage.setItem('reports', JSON.stringify([]));
         setReports([]);
       } finally {
@@ -108,13 +102,10 @@ function AdminDashboard() {
       }
     };
 
-    // Load reports on component mount and set up an interval to check for updates
     loadReports();
     
-    // Optional: Refresh reports every 5 seconds to catch updates from other tabs
     const intervalId = setInterval(loadReports, 5000);
     
-    // Clean up interval on component unmount
     return () => clearInterval(intervalId);
   }, []);
 
