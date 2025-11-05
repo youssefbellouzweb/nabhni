@@ -30,10 +30,10 @@ export default function HomePage() {
           تم إرسال البلاغ بنجاح!
         </div>
       )}
-      <h1 className="text-3xl font-bold mb-8 text-blue-700 text-center">بلاغ المواطن</h1>
+      <h1 className="text-3xl font-bold mb-8 text-blue-700 text-center"><img src="./logo.png" alt="" /></h1>
       <button
         onClick={() => router.push("/report")}
-        className="px-8 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+        className="px-8 py-3 bg-green-600 text-white rounded-xl hover:bg-green-500 transition"
       >
         إرسال بلاغ جديد
       </button>
