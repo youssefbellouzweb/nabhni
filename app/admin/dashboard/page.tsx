@@ -133,7 +133,7 @@ function AdminDashboard() {
       localStorage.setItem('reports', JSON.stringify(updatedReports));
     }
   };
-
+ 
   const handleLogout = () => {
     logout();
     router.push('/admin/login');
@@ -158,72 +158,322 @@ function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="text-center space-y-4">
+          <div className="animate-pulse flex space-x-4">
+            <div className="flex-1 space-y-6 py-1">
+              <div className="h-10 bg-gray-200 rounded w-48 mx-auto"></div>
+              <div className="space-y-3">
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="h-20 bg-gray-200 rounded col-span-2"></div>
+                  <div className="h-20 bg-gray-200 rounded"></div>
+                  <div className="h-20 bg-gray-200 rounded"></div>
+                  <div className="h-20 bg-gray-200 rounded col-span-2"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
         {/* Header */}
-        <header className="bg-white shadow">
-          <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">لوحة التحكم</h1>
-            <div className="flex items-center space-x-4 rtl:space-x-reverse">
-              <div className="text-sm text-gray-600">
-                <p className="font-medium">{user?.username || 'المشرف'}</p>
-                <p className="text-xs text-gray-500">مسؤول النظام</p>
-              </div>
-              <div className="relative">
-                <button
-                  onClick={handleLogout}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <svg className="ml-2 -mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        <header className="bg-white shadow-sm sticky top-0 z-10 backdrop-blur-sm bg-white/80">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <svg className="h-8 w-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                   </svg>
-                  تسجيل الخروج
+                </div>
+                <h1 className="text-xl font-bold text-gray-900 mr-4">نظام البلاغات</h1>
+                <nav className="hidden md:flex space-x-4 rtl:space-x-reverse">
+                  <a href="/admin/dashboard" className="text-blue-600 px-3 py-2 rounded-md text-sm font-medium bg-blue-50">
+                    الرئيسية
+                  </a>
+                  <a href="/admin/reports" className="text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium">
+                    البلاغات
+                  </a>
+                  <a href="#" className="text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium">
+                    الإحصائيات
+                  </a>
+                </nav>
+              </div>
+              
+              <div className="flex items-center space-x-4 rtl:space-x-reverse">
+                <button className="p-2 rounded-full text-gray-500 hover:text-gray-600 hover:bg-gray-100 focus:outline-none">
+                  <span className="sr-only">الإشعارات</span>
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  </svg>
                 </button>
+                
+                <div className="relative">
+                  <button className="flex items-center space-x-2 rtl:space-x-reverse focus:outline-none">
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white font-medium">
+                      {user?.username?.charAt(0).toUpperCase() || 'م'}
+                    </div>
+                    <span className="hidden md:inline-block text-sm font-medium text-gray-700">
+                      {user?.username || 'المشرف'}
+                    </span>
+                    <svg className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden">
+                    <div className="py-1">
+                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">الملف الشخصي</a>
+                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">الإعدادات</a>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                      >
+                        تسجيل الخروج
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </header>
 
-        <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          {/* Problem Types Section */}
-          <div className="bg-white shadow rounded-lg mb-8 overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">توزيع البلاغات حسب النوع</h3>
-              <p className="mt-1 text-sm text-gray-500">نظرة عامة على أنواع المشاكل المبلغة</p>
-            </div>
-            <div className="px-6 py-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {Object.entries(stats.types).map(([type, count]) => (
-                  <div key={type} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-900">
-                        {getReportTypeInArabic(type) || 'غير محدد'}
-                      </span>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {count} {count === 1 ? 'بلاغ' : 'بلاغ'}
-                      </span>
-                    </div>
-                    <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full" 
-                        style={{ width: `${(count / reports.length) * 100}%` }}
-                      ></div>
-                    </div>
-                    <div className="mt-1 text-xs text-gray-500 text-left">
-                      {reports.length > 0 ? Math.round((count / reports.length) * 100) : 0}% من إجمالي البلاغات
-                    </div>
+        <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+          {/* Welcome Banner */}
+          <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl shadow-xl overflow-hidden mb-8">
+            <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+              <div className="flex flex-col md:flex-row items-center justify-between">
+                <div className="text-center md:text-right">
+                  <h2 className="text-2xl font-extrabold text-white sm:text-3xl">
+                    مرحباً بك، {user?.username || 'المشرف'} 👋
+                  </h2>
+                  <p className="mt-2 text-blue-100 max-w-2xl">
+                    هنا يمكنك إدارة البلاغات ومتابعتها وعرض الإحصائيات المهمة.
+                  </p>
+                </div>
+                <div className="mt-4 md:mt-0">
+                  <div className="inline-flex rounded-md shadow">
+                    <a href="/report" className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50">
+                      إنشاء بلاغ جديد
+                      <svg className="ml-2 -mr-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                    </a>
                   </div>
-                ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Overview */}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+            {/* Total Reports */}
+            <div className="bg-white overflow-hidden shadow rounded-xl border border-gray-100 hover:shadow-md transition-shadow duration-200">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 bg-blue-100 p-3 rounded-lg">
+                    <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">إجمالي البلاغات</dt>
+                      <dd className="flex items-baseline">
+                        <div className="text-2xl font-semibold text-gray-900">{stats.total}</div>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-5 py-3">
+                <div className="text-sm">
+                  <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                    عرض الكل
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* New Reports */}
+            <div className="bg-white overflow-hidden shadow rounded-xl border border-gray-100 hover:shadow-md transition-shadow duration-200">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 bg-yellow-100 p-3 rounded-lg">
+                    <svg className="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">بلاغات جديدة</dt>
+                      <dd className="flex items-baseline">
+                        <div className="text-2xl font-semibold text-gray-900">{stats.new}</div>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-5 py-3">
+                <div className="text-sm">
+                  <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                    معالجة
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* In Progress */}
+            <div className="bg-white overflow-hidden shadow rounded-xl border border-gray-100 hover:shadow-md transition-shadow duration-200">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 bg-purple-100 p-3 rounded-lg">
+                    <svg className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">قيد المعالجة</dt>
+                      <dd className="flex items-baseline">
+                        <div className="text-2xl font-semibold text-gray-900">{stats.in_progress}</div>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-5 py-3">
+                <div className="text-sm">
+                  <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                    متابعة
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Resolved */}
+            <div className="bg-white overflow-hidden shadow rounded-xl border border-gray-100 hover:shadow-md transition-shadow duration-200">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 bg-green-100 p-3 rounded-lg">
+                    <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">تم الحل</dt>
+                      <dd className="flex items-baseline">
+                        <div className="text-2xl font-semibold text-gray-900">{stats.resolved}</div>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-5 py-3">
+                <div className="text-sm">
+                  <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                    عرض التفاصيل
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Problem Types Section */}
+          <div className="bg-white shadow-xl rounded-2xl overflow-hidden mb-8 border border-gray-100">
+            <div className="px-6 py-5 border-b border-gray-100">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">توزيع البلاغات حسب النوع</h3>
+                  <p className="mt-1 text-sm text-gray-500">نظرة عامة على أنواع المشاكل المبلغة</p>
+                </div>
+                <div className="mt-2 md:mt-0">
+                  <select className="block w-full md:w-auto pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                    <option>آخر 7 أيام</option>
+                    <option>آخر 30 يومًا</option>
+                    <option>هذا الشهر</option>
+                    <option>هذا العام</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                {Object.entries(stats.types).map(([type, count]) => {
+                  const percentage = reports.length > 0 ? (count / reports.length) * 100 : 0;
+                  const colors = [
+                    { bg: 'bg-blue-50', text: 'text-blue-700', progress: 'bg-blue-600' },
+                    { bg: 'bg-green-50', text: 'text-green-700', progress: 'bg-green-500' },
+                    { bg: 'bg-yellow-50', text: 'text-yellow-700', progress: 'bg-yellow-500' },
+                    { bg: 'bg-purple-50', text: 'text-purple-700', progress: 'bg-purple-500' },
+                    { bg: 'bg-pink-50', text: 'text-pink-700', progress: 'bg-pink-500' },
+                    { bg: 'bg-indigo-50', text: 'text-indigo-700', progress: 'bg-indigo-500' },
+                    { bg: 'bg-red-50', text: 'text-red-700', progress: 'bg-red-500' },
+                    { bg: 'bg-cyan-50', text: 'text-cyan-700', progress: 'bg-cyan-500' },
+                  ];
+                  const color = colors[Math.floor(Math.random() * colors.length)];
+                  
+                  return (
+                    <div key={type} className={`${color.bg} p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow`}>
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className={`text-sm font-semibold ${color.text}`}>
+                          {getReportTypeInArabic(type) || 'غير محدد'}
+                        </h4>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white text-gray-800 shadow-sm">
+                          {count} {count === 1 ? 'بلاغ' : 'بلاغ'}
+                        </span>
+                      </div>
+                      
+                      <div className="mb-2">
+                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                          <span>النسبة المئوية</span>
+                          <span>{Math.round(percentage)}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full ${color.progress}`}
+                            style={{ width: `${percentage}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-3 flex justify-between items-center">
+                        <span className="text-xs text-gray-500">
+                          {Math.round(percentage)}% من الإجمالي
+                        </span>
+                        <button className="text-xs font-medium text-blue-600 hover:text-blue-800">
+                          عرض التفاصيل
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+                
                 {Object.keys(stats.types).length === 0 && (
-                  <div className="col-span-full py-4 text-center text-gray-500">
-                    لا توجد بيانات متاحة
+                  <div className="col-span-full py-12 text-center">
+                    <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h3 className="mt-2 text-sm font-medium text-gray-900">لا توجد بيانات</h3>
+                    <p className="mt-1 text-sm text-gray-500">لم يتم تسجيل أي بلاغات بعد.</p>
+                    <div className="mt-6">
+                      <a
+                        href="/report"
+                        className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      >
+                        <svg className="ml-2 -mr-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        إنشاء بلاغ جديد
+                      </a>
+                    </div>
                   </div>
                 )}
               </div>
