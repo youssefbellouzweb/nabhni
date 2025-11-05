@@ -1,87 +1,109 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export default function CameraCapture({
-  onCapture,
-}: {
-  onCapture: (imageData: string) => void;
-}) {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [streaming, setStreaming] = useState(false);
+interface CameraCaptureProps {
+  onCapture: (image: string) => void;
+}
+
+export default function CameraCapture({ onCapture }: CameraCaptureProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [photo, setPhoto] = useState<string | null>(null);
+  const [stream, setStream] = useState<MediaStream | null>(null);
 
-  // تشغيل الكاميرا عند التحميل
   useEffect(() => {
+    let active = true;
+
     const startCamera = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment" }, // الكاميرا الخلفية
+        const newStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
         });
+        if (!active) return;
+        setStream(newStream);
         if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          setStreaming(true);
+          videoRef.current.srcObject = newStream;
         }
       } catch (err) {
-        alert("تعذر تشغيل الكاميرا: " + err);
+        console.error("خطأ في تشغيل الكاميرا:", err);
+        alert("يرجى السماح بالوصول إلى الكاميرا.");
       }
     };
+
     startCamera();
 
     return () => {
-      if (videoRef.current?.srcObject) {
-        (videoRef.current.srcObject as MediaStream)
-          .getTracks()
-          .forEach((track) => track.stop());
+      active = false;
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, []);
+  }, []); // ✅ تشغيل الكاميرا مرة واحدة فقط
 
-  // التقاط الصورة
   const takePhoto = () => {
-    if (!canvasRef.current || !videoRef.current) return;
-    const canvas = canvasRef.current;
+    if (!videoRef.current || !canvasRef.current) return;
+
     const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    const ctx = canvas.getContext("2d");
-    ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const data = canvas.toDataURL("image/png");
-    setPhoto(data);
-    onCapture(data);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const imageData = canvas.toDataURL("image/png");
+    setPhoto(imageData);
+    onCapture(imageData);
+  };
+
+  const retake = () => {
+    setPhoto(null);
   };
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      {!photo && (
-        <>
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            className="w-full rounded-lg border"
-          ></video>
+    <div className="flex flex-col items-center gap-3 relative">
+      {/* ✅ الفيديو يبقى شغال دائمًا */}
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        muted
+        className={`rounded-lg w-full max-w-sm border transition-all duration-300 ${
+          photo ? "opacity-30" : "opacity-100"
+        }`}
+      />
+
+      {/* ✅ الصورة تظهر فوق الفيديو */}
+      {photo && (
+        <img
+          src={photo}
+          alt="الصورة الملتقطة"
+          className="absolute top-0 left-0 w-full max-w-sm rounded-lg border"
+        />
+      )}
+
+      <div className="z-10 flex gap-3 mt-3">
+        {!photo ? (
           <button
+            type="button"
             onClick={takePhoto}
-            disabled={!streaming}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow"
           >
             📸 التقط صورة
           </button>
-        </>
-      )}
-      {photo && (
-        <>
-          <img src={photo} alt="Captured" className="rounded-lg" />
+        ) : (
           <button
-            onClick={() => setPhoto(null)}
-            className="bg-gray-300 px-3 py-1 rounded"
+            type="button"
+            onClick={retake}
+            className="bg-gray-700 text-white px-4 py-2 rounded-lg shadow"
           >
-            🔄 إعادة الالتقاط
+            🔁 إعادة الالتقاط
           </button>
-        </>
-      )}
-      <canvas ref={canvasRef} className="hidden"></canvas>
+        )}
+      </div>
+
+      <canvas ref={canvasRef} className="hidden" />
     </div>
   );
 }
