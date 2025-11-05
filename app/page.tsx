@@ -1,8 +1,8 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 
-export default function HomePage() {
+function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showSuccess, setShowSuccess] = useState(false);
@@ -38,5 +38,20 @@ export default function HomePage() {
         إرسال بلاغ جديد
       </button>
     </main>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen flex flex-col justify-center items-center bg-gray-50 p-4">
+        <h1 className="text-3xl font-bold mb-8 text-blue-700 text-center"><img src="./logo.png" alt="" /></h1>
+        <button className="px-8 py-3 bg-green-600 text-white rounded-xl hover:bg-green-500 transition">
+          إرسال بلاغ جديد
+        </button>
+      </main>
+    }>
+      <HomePageContent />
+    </Suspense>
   );
 }
